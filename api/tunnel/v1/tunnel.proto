@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package tunnel.v1;
+
+option go_package = "github.com/grafana/alloy-remote-config/api/gen/proto/go/tunnel/v1;tunnelv1";
+
+enum HTTPRequestMethod {
+  HTTP_REQUEST_METHOD_UNSPECIFIED = 0;
+  HTTP_REQUEST_METHOD_GET = 1;
+  HTTP_REQUEST_METHOD_POST = 2;
+  HTTP_REQUEST_METHOD_PUT = 3;
+  HTTP_REQUEST_METHOD_DELETE = 4;
+  HTTP_REQUEST_METHOD_PATCH = 5;
+}
+
+message HTTPRequest {
+  HTTPRequestMethod method = 1;
+
+  // Request path and query parameters.
+  string request_uri = 2;
+
+  optional string content_type = 3;
+  optional bytes body = 4;
+}
+
+message HTTPResponse {
+  uint32 status = 1;
+  string request_uri = 2;
+  optional bytes body = 3;
+}
+
+message RemoteRequest {
+  uint64 request_id = 1;
+  HTTPRequest request = 2;
+}
+
+message RemoteRequestResult {
+  uint64 request_id = 1;
+  HTTPResponse response = 2;
+}
+
+message CollectorHelloMessage {
+  string collector_id = 1;
+}
+
+// ServerMessage is sent by the tunnel service to a collector.
+message ServerMessage {
+  oneof message {
+    RemoteRequest request = 1;
+  }
+}
+
+// CollectorMessage is sent by a collector to the tunnel service.
+message CollectorMessage {
+  oneof message {
+    CollectorHelloMessage hello = 1;
+    RemoteRequestResult result = 2;
+  }
+}
+
+// TunnelService defines the collector-side RPCs for establishing remote connections to Alloy collectors.
+service TunnelService {
+  // RegisterCollector is used by a collector to register itself with the service
+  // and receive requests routed to it.
+  //
+  // The collector keeps the stream open. It must send CollectorHelloMessage as the first message to authorize.
+  rpc RegisterCollector(stream CollectorMessage) returns (stream ServerMessage);
+}
