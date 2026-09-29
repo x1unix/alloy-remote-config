@@ -39,6 +39,11 @@ message RemoteRequestResult {
   HTTPResponse response = 2;
 }
 
+// CancelRemoteRequest is a message to cancel a previously sent remote request.
+message CancelRemoteRequest {
+  uint64 request_id = 1;
+}
+
 message CollectorHelloMessage {
   string collector_id = 1;
 }
@@ -46,7 +51,8 @@ message CollectorHelloMessage {
 // ServerMessage is sent by the tunnel service to a collector.
 message ServerMessage {
   oneof message {
-    RemoteRequest request = 1;
+    RemoteRequest remote_request = 1;
+    CancelRemoteRequest cancel_request = 2;
   }
 }
 
