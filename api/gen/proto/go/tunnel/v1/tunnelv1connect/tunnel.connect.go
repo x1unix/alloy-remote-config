@@ -49,7 +49,7 @@ type TunnelServiceClient interface {
 	// RegisterCollector is used by a collector to register itself with the service
 	// and receive requests routed to it.
 	//
-	// The collector keeps the stream open. It must send CollectorHelloMessage as the first message to authorize.
+	// The collector keeps the stream open. It must send the `X-Collector-ID` header with a collector ID to authorize.
 	RegisterCollector(context.Context) *connect.BidiStreamForClient[v1.CollectorMessage, v1.ServerMessage]
 }
 
@@ -87,7 +87,7 @@ type TunnelServiceHandler interface {
 	// RegisterCollector is used by a collector to register itself with the service
 	// and receive requests routed to it.
 	//
-	// The collector keeps the stream open. It must send CollectorHelloMessage as the first message to authorize.
+	// The collector keeps the stream open. It must send the `X-Collector-ID` header with a collector ID to authorize.
 	RegisterCollector(context.Context, *connect.BidiStream[v1.CollectorMessage, v1.ServerMessage]) error
 }
 
