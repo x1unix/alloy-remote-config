@@ -50,6 +50,12 @@ type TunnelServiceClient interface {
 	// and receive requests routed to it.
 	//
 	// The collector keeps the stream open. It must send the `X-Collector-ID` header with a collector ID to authorize.
+	//
+	// Request IDs are scoped to a single stream. A collector must send each RemoteRequestResult
+	// on the same stream that delivered the corresponding RemoteRequest.
+	//
+	// If that stream is closed (e.g., the collector reconnected while handling the request), the result must be
+	// dropped instead of being sent on a new stream, where the same ID may refer to a different request.
 	RegisterCollector(context.Context) *connect.BidiStreamForClient[v1.CollectorMessage, v1.ServerMessage]
 }
 
@@ -88,6 +94,12 @@ type TunnelServiceHandler interface {
 	// and receive requests routed to it.
 	//
 	// The collector keeps the stream open. It must send the `X-Collector-ID` header with a collector ID to authorize.
+	//
+	// Request IDs are scoped to a single stream. A collector must send each RemoteRequestResult
+	// on the same stream that delivered the corresponding RemoteRequest.
+	//
+	// If that stream is closed (e.g., the collector reconnected while handling the request), the result must be
+	// dropped instead of being sent on a new stream, where the same ID may refer to a different request.
 	RegisterCollector(context.Context, *connect.BidiStream[v1.CollectorMessage, v1.ServerMessage]) error
 }
 

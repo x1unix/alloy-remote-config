@@ -218,6 +218,7 @@ type RemoteRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ID of the request, unique within the stream. See TunnelService.RegisterCollector.
 	RequestId uint64       `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	Request   *HTTPRequest `protobuf:"bytes,2,opt,name=request,proto3" json:"request,omitempty"`
 }
@@ -378,6 +379,7 @@ type ServerMessage struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Message:
+	//
 	//	*ServerMessage_RemoteRequest
 	//	*ServerMessage_CancelRequest
 	Message isServerMessage_Message `protobuf_oneof:"message"`
@@ -459,6 +461,7 @@ type CollectorMessage struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Message:
+	//
 	//	*CollectorMessage_Result
 	Message isCollectorMessage_Message `protobuf_oneof:"message"`
 }
